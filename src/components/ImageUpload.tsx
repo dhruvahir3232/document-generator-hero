@@ -89,7 +89,8 @@ export function ImageUpload({ initialImage, onImageUploaded }: ImageUploadProps)
     }
   };
 
-  const openFileSelector = () => {
+  const openFileSelector = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent event propagation to parent elements
     document.getElementById('image-upload')?.click();
   };
 

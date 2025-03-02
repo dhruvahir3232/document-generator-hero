@@ -32,7 +32,8 @@ export function BasicInfoForm({
     onChange({ ...formData, [name]: value });
   };
 
-  const openFileSelector = () => {
+  const openFileSelector = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Stop the event from propagating
     document.getElementById('image-upload')?.click();
   };
 
