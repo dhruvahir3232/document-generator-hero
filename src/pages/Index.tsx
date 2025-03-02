@@ -5,10 +5,10 @@ import { StudentSearch } from "@/components/StudentSearch";
 import { DocumentTypeSelector } from "@/components/DocumentTypeSelector";
 import { StudentResultsList } from "@/components/StudentResultsList";
 import { DocumentPreview } from "@/components/DocumentPreview";
-import { generateMockStudents, findStudentsByName } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Index = () => {
   const [searchResults, setSearchResults] = useState<Student[]>([]);
@@ -17,25 +17,54 @@ const Index = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  // This would be replaced with a real API call to fetch student data
-  const handleSearch = (name: string) => {
+  // Search for students in the Supabase database
+  const handleSearch = async (name: string) => {
     setIsSearching(true);
     setHasSearched(true);
     
-    // Simulate API call with timeout
-    setTimeout(() => {
-      const mockStudents = generateMockStudents();
-      const results = findStudentsByName(mockStudents, name);
-      setSearchResults(results);
-      setIsSearching(false);
+    try {
+      // Query the Supabase database for students matching the name
+      const { data, error } = await supabase
+        .from('students')
+        .select('*')
+        .ilike('name', `%${name}%`);
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Map the Supabase data to our Student type
+      const students: Student[] = data.map(student => ({
+        id: student.id,
+        name: student.name,
+        email: student.email,
+        class: student.class,
+        photo_url: student.picture
+      }));
+      
+      setSearchResults(students);
       
       // Auto-select if only one result
-      if (results.length === 1) {
-        setSelectedStudent(results[0]);
+      if (students.length === 1) {
+        setSelectedStudent(students[0]);
       } else {
         setSelectedStudent(null);
       }
-    }, 800);
+      
+      // Show toast for search results
+      if (students.length === 0) {
+        toast.info("No students found with that name.");
+      } else {
+        toast.success(`Found ${students.length} student(s).`);
+      }
+      
+    } catch (error) {
+      console.error("Error searching for students:", error);
+      toast.error("Failed to search for students. Please try again.");
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const handleSelectStudent = (student: Student) => {
