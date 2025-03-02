@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Student, StudentCard } from "@/components/StudentCard";
@@ -22,7 +21,6 @@ export default function StudentsList() {
   }, []);
 
   useEffect(() => {
-    // Filter students based on search query
     if (searchQuery.trim() === "") {
       setFilteredStudents(students);
     } else {
@@ -47,7 +45,6 @@ export default function StudentsList() {
         throw error;
       }
 
-      // Map the Supabase data to our Student type
       const mappedStudents: Student[] = data.map(student => ({
         id: student.id,
         name: student.name,
@@ -72,7 +69,6 @@ export default function StudentsList() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="bg-primary text-primary-foreground py-6">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-4xl mx-auto">
@@ -87,7 +83,6 @@ export default function StudentsList() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 sm:px-6 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-6">
@@ -146,21 +141,15 @@ export default function StudentsList() {
   );
 }
 
-// Component for each student list item
 function StudentListItem({ student }: { student: Student }) {
   return (
     <div className="group relative rounded-md overflow-hidden border bg-card hover:bg-accent/50 transition-colors">
-      <StudentCard 
-        student={student} 
-        onSelect={() => {}} // Not using selection functionality here
-      />
-      <div className="absolute inset-y-0 right-4 flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
-        <Button asChild variant="ghost" size="sm">
-          <Link to={`/manage-students/${student.id}`}>
-            Edit
-          </Link>
-        </Button>
-      </div>
+      <Link to={`/manage-students/${student.id}`}>
+        <StudentCard 
+          student={student} 
+          onSelect={() => {}} // Not using selection functionality here
+        />
+      </Link>
     </div>
   );
 }
