@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ImageUpload } from "@/components/ImageUpload";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlusCircle, Trash2 } from "lucide-react";
+import { Json } from "@/integrations/supabase/types";
 
 interface StudentFormProps {
   initialStudent?: Student;
@@ -89,11 +90,19 @@ export function StudentForm({ initialStudent, onSuccess }: StudentFormProps) {
       
       if (data) {
         if (data.marksheet_10th) {
-          setMarksheet10th(data.marksheet_10th as AcademicRecord);
+          // Type cast the JSON data to AcademicRecord
+          const record10th = data.marksheet_10th as unknown as AcademicRecord;
+          if (record10th && typeof record10th === 'object' && 'marks' in record10th) {
+            setMarksheet10th(record10th);
+          }
         }
         
         if (data.marksheet_12th) {
-          setMarksheet12th(data.marksheet_12th as AcademicRecord);
+          // Type cast the JSON data to AcademicRecord
+          const record12th = data.marksheet_12th as unknown as AcademicRecord;
+          if (record12th && typeof record12th === 'object' && 'marks' in record12th) {
+            setMarksheet12th(record12th);
+          }
         }
       }
     } catch (error: any) {
@@ -172,13 +181,15 @@ export function StudentForm({ initialStudent, onSuccess }: StudentFormProps) {
         throw new Error("Student name is required");
       }
 
+      // Convert AcademicRecord to Json by direct assignment (TypeScript will allow this)
       const studentData = {
         name: formData.name.trim(),
         email: formData.email.trim() || null,
         class: formData.class.trim() || null,
         picture: formData.picture || null,
-        marksheet_10th: activeTab === "academic" ? marksheet10th : undefined,
-        marksheet_12th: activeTab === "academic" ? marksheet12th : undefined
+        // Only include academic data if we're on that tab
+        marksheet_10th: activeTab === "academic" ? marksheet10th as unknown as Json : null,
+        marksheet_12th: activeTab === "academic" ? marksheet12th as unknown as Json : null
       };
 
       console.log("Submitting student data:", studentData);
@@ -206,13 +217,18 @@ export function StudentForm({ initialStudent, onSuccess }: StudentFormProps) {
         throw response.error;
       }
 
+      const hasAcademicRecords = Boolean(
+        response.data.marksheet_10th || response.data.marksheet_12th
+      );
+
       // Map to our Student type
       const savedStudent: Student = {
         id: response.data.id,
         name: response.data.name,
         email: response.data.email,
         class: response.data.class,
-        photo_url: response.data.picture
+        photo_url: response.data.picture,
+        has_academic_records: hasAcademicRecords
       };
 
       toast({
