@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Student, StudentCard } from "@/components/StudentCard";
@@ -39,7 +38,7 @@ export default function StudentsList() {
     try {
       const { data, error } = await supabase
         .from('students')
-        .select('*')
+        .select('id, name, email, class, picture, marksheet_10th, marksheet_12th')
         .order('name', { ascending: true });
 
       if (error) {
@@ -51,7 +50,8 @@ export default function StudentsList() {
         name: student.name,
         email: student.email,
         class: student.class,
-        photo_url: student.picture
+        photo_url: student.picture,
+        has_academic_records: Boolean(student.marksheet_10th || student.marksheet_12th)
       }));
 
       setStudents(mappedStudents);

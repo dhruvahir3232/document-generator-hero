@@ -2,6 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
+import { BookOpen } from "lucide-react";
 
 export interface Student {
   id: string;
@@ -9,6 +10,7 @@ export interface Student {
   email?: string;
   photo_url?: string;
   class?: string;
+  has_academic_records?: boolean;
 }
 
 interface StudentCardProps {
@@ -35,9 +37,17 @@ export function StudentCard({ student, onSelect }: StudentCardProps) {
           {student.email && (
             <p className="text-sm text-muted-foreground truncate">{student.email}</p>
           )}
-          {student.class && (
-            <p className="text-sm text-muted-foreground truncate">Class: {student.class}</p>
-          )}
+          <div className="flex items-center space-x-2">
+            {student.class && (
+              <p className="text-sm text-muted-foreground truncate">Class: {student.class}</p>
+            )}
+            {student.has_academic_records && (
+              <span className="inline-flex items-center text-xs text-blue-600">
+                <BookOpen className="h-3 w-3 mr-1" />
+                Academic records
+              </span>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

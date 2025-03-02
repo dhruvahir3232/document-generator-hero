@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Student } from "@/components/StudentCard";
@@ -43,7 +42,8 @@ export default function ManageStudents() {
           name: data.name,
           email: data.email,
           class: data.class,
-          photo_url: data.picture
+          photo_url: data.picture,
+          has_academic_records: Boolean(data.marksheet_10th || data.marksheet_12th)
         });
       }
     } catch (error: any) {
@@ -112,27 +112,8 @@ export default function ManageStudents() {
                 <div className="flex justify-center items-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                 </div>
-              ) : isEditing ? (
-                <Tabs defaultValue="basic">
-                  <TabsList className="mb-4">
-                    <TabsTrigger value="basic">Basic Information</TabsTrigger>
-                    <TabsTrigger value="academic">Academic Records</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="basic">
-                    <StudentForm initialStudent={student} onSuccess={handleSuccess} />
-                  </TabsContent>
-                  
-                  <TabsContent value="academic">
-                    <div className="py-8 text-center">
-                      <p className="text-muted-foreground">
-                        Academic records editor will be implemented in a future update.
-                      </p>
-                    </div>
-                  </TabsContent>
-                </Tabs>
               ) : (
-                <StudentForm onSuccess={handleSuccess} />
+                <StudentForm initialStudent={student} onSuccess={handleSuccess} />
               )}
             </CardContent>
           </Card>
