@@ -7,6 +7,7 @@ import { StudentResultsList } from "@/components/StudentResultsList";
 import { Student } from "@/components/StudentCard";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface SearchSectionProps {
   onSelectStudent: (student: Student) => void;
@@ -74,18 +75,39 @@ export const SearchSection = ({ onSelectStudent, selectedStudent }: SearchSectio
           <div className="space-y-6 pr-4">
             <StudentSearch onSearch={handleSearch} isLoading={isSearching} />
             
-            {hasSearched && !isSearching && (
+            {hasSearched && (
               <>
-                {searchResults.length > 0 ? (
-                  <StudentResultsList 
-                    students={searchResults} 
-                    selectedStudent={selectedStudent} 
-                    onSelectStudent={onSelectStudent} 
-                  />
-                ) : (
-                  <div className="text-center py-6 text-muted-foreground">
-                    No students found. Try a different name.
+                {isSearching ? (
+                  <div className="space-y-4 animate-fade-in">
+                    <h2 className="text-xl font-semibold">Loading Results</h2>
+                    <div className="space-y-3">
+                      {[1, 2, 3].map((i) => (
+                        <Card key={i} className="overflow-hidden">
+                          <div className="p-4 flex items-center gap-4">
+                            <Skeleton className="h-12 w-12 rounded-full" />
+                            <div className="space-y-2">
+                              <Skeleton className="h-5 w-32" />
+                              <Skeleton className="h-4 w-24" />
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
                   </div>
+                ) : (
+                  <>
+                    {searchResults.length > 0 ? (
+                      <StudentResultsList 
+                        students={searchResults} 
+                        selectedStudent={selectedStudent} 
+                        onSelectStudent={onSelectStudent} 
+                      />
+                    ) : (
+                      <div className="text-center py-6 text-muted-foreground">
+                        No students found. Try a different name.
+                      </div>
+                    )}
+                  </>
                 )}
               </>
             )}

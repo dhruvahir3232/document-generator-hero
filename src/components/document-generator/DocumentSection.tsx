@@ -1,8 +1,10 @@
 
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { DocumentTypeSelector } from "@/components/DocumentTypeSelector";
 import { DocumentPreview } from "@/components/DocumentPreview";
 import { Student } from "@/components/StudentCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface DocumentSectionProps {
   selectedStudent: Student | null;
@@ -15,6 +17,18 @@ export const DocumentSection = ({
   selectedDocumentType,
   onSelectDocumentType
 }: DocumentSectionProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const handleDocumentTypeChange = (docType: string) => {
+    setIsLoading(true);
+    onSelectDocumentType(docType);
+    
+    // Simulate loading time for document generation
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+  };
+
   if (!selectedStudent) {
     return (
       <Card className="bg-secondary/30 border-dashed">
@@ -39,7 +53,7 @@ export const DocumentSection = ({
         <CardContent className="p-4">
           <DocumentTypeSelector 
             selectedType={selectedDocumentType} 
-            onSelect={onSelectDocumentType} 
+            onSelect={handleDocumentTypeChange} 
           />
         </CardContent>
       </Card>
@@ -50,10 +64,35 @@ export const DocumentSection = ({
             <h2 className="text-lg font-medium">Document Preview</h2>
           </div>
           <CardContent className="p-6">
-            <DocumentPreview 
-              documentType={selectedDocumentType} 
-              student={selectedStudent} 
-            />
+            {isLoading ? (
+              <div className="space-y-4 animate-pulse">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <Skeleton className="h-8 w-64 mb-3" />
+                    <Skeleton className="h-4 w-40" />
+                  </div>
+                  <Skeleton className="h-16 w-16 rounded" />
+                </div>
+                
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-5/6" />
+                
+                <div className="my-6">
+                  <Skeleton className="h-20 w-full rounded-md" />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                </div>
+              </div>
+            ) : (
+              <DocumentPreview 
+                documentType={selectedDocumentType} 
+                student={selectedStudent} 
+              />
+            )}
           </CardContent>
         </Card>
       ) : (
