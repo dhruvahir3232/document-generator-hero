@@ -1,9 +1,7 @@
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AcademicRecord } from "@/components/marksheets/StandardTenMarksheet";
-import { StandardTenMarksheet } from "@/components/marksheets/StandardTenMarksheet";
-import { StandardTwelveMarksheet } from "@/components/marksheets/StandardTwelveMarksheet";
+import { AcademicMarksheet } from "@/components/marksheets/AcademicMarksheet";
 
 interface AcademicRecordsFormProps {
   marksheet10th: AcademicRecord;
@@ -27,15 +25,17 @@ export function AcademicRecordsForm({
   return (
     <form onSubmit={onSubmit} className="space-y-8">
       {/* 10th Standard Marksheet */}
-      <StandardTenMarksheet 
+      <AcademicMarksheet 
         marksheet={marksheet10th}
         onChange={onMarksheet10thChange}
+        standard="10th"
       />
       
       {/* 12th Standard Marksheet */}
-      <StandardTwelveMarksheet 
+      <AcademicMarksheet 
         marksheet={marksheet12th}
         onChange={onMarksheet12thChange}
+        standard="12th"
       />
       
       <div className="flex justify-end">

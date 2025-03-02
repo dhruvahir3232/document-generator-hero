@@ -32,7 +32,7 @@ export function useAcademicRecords({ studentId }: UseAcademicRecordsProps) {
         .from('students')
         .select('marksheet_10th, marksheet_12th')
         .eq('id', studentId)
-        .single();
+        .maybeSingle(); // Using maybeSingle instead of single for better error handling
         
       if (error) {
         throw error;
