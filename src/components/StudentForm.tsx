@@ -2,33 +2,17 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Student } from "@/components/StudentCard";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
-import { ImageUpload } from "@/components/ImageUpload";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { Json } from "@/integrations/supabase/types";
+import { StandardTenMarksheet, AcademicRecord } from "@/components/marksheets/StandardTenMarksheet";
+import { StandardTwelveMarksheet } from "@/components/marksheets/StandardTwelveMarksheet";
+import { BasicInfoForm } from "@/components/students/BasicInfoForm";
 
 interface StudentFormProps {
   initialStudent?: Student;
   onSuccess?: (student: Student) => void;
-}
-
-interface Mark {
-  subject: string;
-  marks: string;
-  maxMarks: string;
-}
-
-interface AcademicRecord {
-  type: string;
-  year: string;
-  school: string;
-  board: string;
-  percentage?: string;
-  marks: Mark[];
 }
 
 export function StudentForm({ initialStudent, onSuccess }: StudentFormProps) {
@@ -110,65 +94,9 @@ export function StudentForm({ initialStudent, onSuccess }: StudentFormProps) {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-  
-  const handle10thChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setMarksheet10th((prev) => ({ ...prev, [name]: value }));
-  };
-  
-  const handle12thChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setMarksheet12th((prev) => ({ ...prev, [name]: value }));
-  };
-  
-  const handle10thMarksChange = (index: number, field: 'subject' | 'marks' | 'maxMarks', value: string) => {
-    setMarksheet10th((prev) => {
-      const updatedMarks = [...prev.marks];
-      updatedMarks[index] = { ...updatedMarks[index], [field]: value };
-      return { ...prev, marks: updatedMarks };
-    });
-  };
-  
-  const handle12thMarksChange = (index: number, field: 'subject' | 'marks' | 'maxMarks', value: string) => {
-    setMarksheet12th((prev) => {
-      const updatedMarks = [...prev.marks];
-      updatedMarks[index] = { ...updatedMarks[index], [field]: value };
-      return { ...prev, marks: updatedMarks };
-    });
-  };
-  
-  const add10thSubject = () => {
-    setMarksheet10th((prev) => ({
-      ...prev,
-      marks: [...prev.marks, { subject: "", marks: "", maxMarks: "100" }]
-    }));
-  };
-  
-  const add12thSubject = () => {
-    setMarksheet12th((prev) => ({
-      ...prev,
-      marks: [...prev.marks, { subject: "", marks: "", maxMarks: "100" }]
-    }));
-  };
-  
-  const remove10thSubject = (index: number) => {
-    setMarksheet10th((prev) => {
-      const updatedMarks = [...prev.marks];
-      updatedMarks.splice(index, 1);
-      return { ...prev, marks: updatedMarks };
-    });
-  };
-  
-  const remove12thSubject = (index: number) => {
-    setMarksheet12th((prev) => {
-      const updatedMarks = [...prev.marks];
-      updatedMarks.splice(index, 1);
-      return { ...prev, marks: updatedMarks };
-    });
+  const handleImageUploaded = (url: string) => {
+    console.log("Image uploaded with URL:", url);
+    setFormData((prev) => ({ ...prev, picture: url }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -280,11 +208,6 @@ export function StudentForm({ initialStudent, onSuccess }: StudentFormProps) {
     }
   };
 
-  const handleImageUploaded = (url: string) => {
-    console.log("Image uploaded with URL:", url);
-    setFormData((prev) => ({ ...prev, picture: url }));
-  };
-
   return (
     <Tabs defaultValue="basic" value={activeTab} onValueChange={setActiveTab}>
       <TabsList className="mb-4">
@@ -293,291 +216,29 @@ export function StudentForm({ initialStudent, onSuccess }: StudentFormProps) {
       </TabsList>
       
       <TabsContent value="basic">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid md:grid-cols-5 gap-6">
-            <div className="md:col-span-2">
-              <Card>
-                <CardContent className="p-4">
-                  <div className="aspect-square overflow-hidden rounded-md mb-4">
-                    <ImageUpload 
-                      initialImage={formData.picture} 
-                      onImageUploaded={handleImageUploaded} 
-                    />
-                  </div>
-                  <p className="text-xs text-muted-foreground text-center">
-                    Upload a student photo here
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="md:col-span-3 space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium">
-                  Student Name <span className="text-destructive">*</span>
-                </label>
-                <Input
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Enter student name"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium">
-                  Email Address
-                </label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Enter student email (optional)"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="class" className="text-sm font-medium">
-                  Class / Grade
-                </label>
-                <Input
-                  id="class"
-                  name="class"
-                  value={formData.class}
-                  onChange={handleChange}
-                  placeholder="Enter class or grade (optional)"
-                />
-              </div>
-
-              <div className="pt-4">
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Saving..." : initialStudent ? "Update Student" : "Add Student"}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </form>
+        <BasicInfoForm 
+          formData={formData}
+          onChange={setFormData}
+          onImageUploaded={handleImageUploaded}
+          loading={loading}
+          onSubmit={handleSubmit}
+          isEditing={!!initialStudent}
+        />
       </TabsContent>
       
       <TabsContent value="academic">
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* 10th Standard Marksheet */}
-          <Card>
-            <CardContent className="p-6 space-y-4">
-              <h3 className="text-lg font-medium">10th Standard Marksheet</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="year10" className="text-sm font-medium">Year</label>
-                  <Input
-                    id="year10"
-                    name="year"
-                    value={marksheet10th.year}
-                    onChange={handle10thChange}
-                    placeholder="Year of completion"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="board10" className="text-sm font-medium">Board/University</label>
-                  <Input
-                    id="board10"
-                    name="board"
-                    value={marksheet10th.board}
-                    onChange={handle10thChange}
-                    placeholder="CBSE, ICSE, State board, etc."
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="school10" className="text-sm font-medium">School/Institution</label>
-                  <Input
-                    id="school10"
-                    name="school"
-                    value={marksheet10th.school}
-                    onChange={handle10thChange}
-                    placeholder="School name"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="percentage10" className="text-sm font-medium">Overall Percentage</label>
-                  <Input
-                    id="percentage10"
-                    name="percentage"
-                    value={marksheet10th.percentage}
-                    onChange={handle10thChange}
-                    placeholder="Overall percentage"
-                  />
-                </div>
-              </div>
-              
-              <div className="pt-2">
-                <h4 className="text-sm font-medium mb-2">Subject-wise Marks</h4>
-                
-                {marksheet10th.marks.map((mark, index) => (
-                  <div key={`10th-${index}`} className="grid grid-cols-12 gap-2 mb-2 items-center">
-                    <div className="col-span-5">
-                      <Input
-                        placeholder="Subject name"
-                        value={mark.subject}
-                        onChange={(e) => handle10thMarksChange(index, 'subject', e.target.value)}
-                      />
-                    </div>
-                    <div className="col-span-3">
-                      <Input
-                        placeholder="Marks"
-                        value={mark.marks}
-                        onChange={(e) => handle10thMarksChange(index, 'marks', e.target.value)}
-                      />
-                    </div>
-                    <div className="col-span-3">
-                      <Input
-                        placeholder="Max marks"
-                        value={mark.maxMarks}
-                        onChange={(e) => handle10thMarksChange(index, 'maxMarks', e.target.value)}
-                      />
-                    </div>
-                    <div className="col-span-1 flex justify-center">
-                      {marksheet10th.marks.length > 1 && (
-                        <Button 
-                          type="button" 
-                          variant="ghost" 
-                          size="icon"
-                          onClick={() => remove10thSubject(index)}
-                          className="h-8 w-8"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-                
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={add10thSubject}
-                  className="mt-2"
-                >
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Add Subject
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <StandardTenMarksheet 
+            marksheet={marksheet10th}
+            onChange={setMarksheet10th}
+          />
           
           {/* 12th Standard Marksheet */}
-          <Card>
-            <CardContent className="p-6 space-y-4">
-              <h3 className="text-lg font-medium">12th Standard Marksheet</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="year12" className="text-sm font-medium">Year</label>
-                  <Input
-                    id="year12"
-                    name="year"
-                    value={marksheet12th.year}
-                    onChange={handle12thChange}
-                    placeholder="Year of completion"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="board12" className="text-sm font-medium">Board/University</label>
-                  <Input
-                    id="board12"
-                    name="board"
-                    value={marksheet12th.board}
-                    onChange={handle12thChange}
-                    placeholder="CBSE, ICSE, State board, etc."
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="school12" className="text-sm font-medium">School/Institution</label>
-                  <Input
-                    id="school12"
-                    name="school"
-                    value={marksheet12th.school}
-                    onChange={handle12thChange}
-                    placeholder="School name"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="percentage12" className="text-sm font-medium">Overall Percentage</label>
-                  <Input
-                    id="percentage12"
-                    name="percentage"
-                    value={marksheet12th.percentage}
-                    onChange={handle12thChange}
-                    placeholder="Overall percentage"
-                  />
-                </div>
-              </div>
-              
-              <div className="pt-2">
-                <h4 className="text-sm font-medium mb-2">Subject-wise Marks</h4>
-                
-                {marksheet12th.marks.map((mark, index) => (
-                  <div key={`12th-${index}`} className="grid grid-cols-12 gap-2 mb-2 items-center">
-                    <div className="col-span-5">
-                      <Input
-                        placeholder="Subject name"
-                        value={mark.subject}
-                        onChange={(e) => handle12thMarksChange(index, 'subject', e.target.value)}
-                      />
-                    </div>
-                    <div className="col-span-3">
-                      <Input
-                        placeholder="Marks"
-                        value={mark.marks}
-                        onChange={(e) => handle12thMarksChange(index, 'marks', e.target.value)}
-                      />
-                    </div>
-                    <div className="col-span-3">
-                      <Input
-                        placeholder="Max marks"
-                        value={mark.maxMarks}
-                        onChange={(e) => handle12thMarksChange(index, 'maxMarks', e.target.value)}
-                      />
-                    </div>
-                    <div className="col-span-1 flex justify-center">
-                      {marksheet12th.marks.length > 1 && (
-                        <Button 
-                          type="button" 
-                          variant="ghost" 
-                          size="icon"
-                          onClick={() => remove12thSubject(index)}
-                          className="h-8 w-8"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-                
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={add12thSubject}
-                  className="mt-2"
-                >
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Add Subject
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <StandardTwelveMarksheet 
+            marksheet={marksheet12th}
+            onChange={setMarksheet12th}
+          />
           
           <div className="flex justify-end">
             <Button type="submit" className="w-40" disabled={loading}>
