@@ -31,14 +31,14 @@ function Calendar({
         nav_button_previous: "absolute left-1",
         nav_button_next: "absolute right-1",
         table: "w-full border-collapse space-y-1",
-        head_row: "flex justify-between w-full",
+        head_row: "flex justify-center w-full space-x-1",
         head_cell:
-          "text-muted-foreground rounded-md w-8 font-normal text-[0.8rem] text-center",
-        row: "flex w-full mt-2 justify-between",
+          "text-muted-foreground rounded-md w-7 font-normal text-[0.8rem] text-center",
+        row: "flex w-full mt-2 justify-center space-x-1",
         cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md",
         day: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-8 w-8 p-0 font-normal aria-selected:opacity-100 rounded-md"
+          "h-7 w-7 p-0 font-normal aria-selected:opacity-100 rounded-md"
         ),
         day_range_end: "day-range-end",
         day_selected:
