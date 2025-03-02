@@ -1,12 +1,17 @@
 
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Student } from "../StudentCard";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface AttendanceSheetProps {
   student: Student;
 }
 
 export function AttendanceSheet({ student }: AttendanceSheetProps) {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
   // Mock data for attendance
   const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   
