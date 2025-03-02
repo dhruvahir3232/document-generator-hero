@@ -89,9 +89,16 @@ export function ImageUpload({ initialImage, onImageUploaded }: ImageUploadProps)
     }
   };
 
+  const openFileSelector = () => {
+    document.getElementById('image-upload')?.click();
+  };
+
   return (
     <div className="flex flex-col items-center justify-center gap-4">
-      <div className="relative aspect-square w-full bg-muted/25 rounded-md overflow-hidden">
+      <div 
+        className="relative aspect-square w-full bg-muted/25 rounded-md overflow-hidden cursor-pointer"
+        onClick={openFileSelector}
+      >
         {preview ? (
           <img 
             src={preview} 
@@ -126,7 +133,7 @@ export function ImageUpload({ initialImage, onImageUploaded }: ImageUploadProps)
             variant="outline" 
             disabled={uploading} 
             className="w-full"
-            onClick={() => document.getElementById('image-upload')?.click()}
+            onClick={openFileSelector}
           >
             <Upload className="h-4 w-4 mr-2" />
             {preview ? "Change Image" : "Upload Image"}

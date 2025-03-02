@@ -32,11 +32,15 @@ export function BasicInfoForm({
     onChange({ ...formData, [name]: value });
   };
 
+  const openFileSelector = () => {
+    document.getElementById('image-upload')?.click();
+  };
+
   return (
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="grid md:grid-cols-5 gap-6">
         <div className="md:col-span-2">
-          <Card>
+          <Card className="cursor-pointer" onClick={openFileSelector}>
             <CardContent className="p-4">
               <div className="aspect-square overflow-hidden rounded-md mb-4">
                 <ImageUpload 
