@@ -57,6 +57,8 @@ export function StudentForm({ initialStudent, onSuccess }: StudentFormProps) {
         picture: formData.picture || null
       };
 
+      console.log("Submitting student data:", studentData);
+
       let response;
 
       if (initialStudent) {
@@ -121,6 +123,7 @@ export function StudentForm({ initialStudent, onSuccess }: StudentFormProps) {
   };
 
   const handleImageUploaded = (url: string) => {
+    console.log("Image uploaded with URL:", url);
     setFormData((prev) => ({ ...prev, picture: url }));
   };
 
