@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { AttendanceRecord } from "@/types/attendance";
+import { AttendanceRecord, SupabaseAttendanceRecord } from "@/types/attendance";
 
 interface UseAttendanceRecordsProps {
   studentId?: string;
@@ -14,6 +14,11 @@ export function useAttendanceRecords({ studentId, date }: UseAttendanceRecordsPr
   const [loading, setLoading] = useState(false);
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([]);
   const [error, setError] = useState<Error | null>(null);
+  
+  // Helper function to validate status
+  const isValidStatus = (status: string): status is "present" | "absent" | "late" | "excused" => {
+    return ["present", "absent", "late", "excused"].includes(status);
+  };
   
   // Fetch attendance records based on filters
   const fetchAttendanceRecords = async () => {
@@ -39,7 +44,15 @@ export function useAttendanceRecords({ studentId, date }: UseAttendanceRecordsPr
         throw error;
       }
       
-      setAttendanceRecords(data as AttendanceRecord[]);
+      // Convert Supabase records to our type
+      const typedRecords: AttendanceRecord[] = (data as SupabaseAttendanceRecord[])
+        .filter(record => isValidStatus(record.status))
+        .map(record => ({
+          ...record,
+          status: record.status as "present" | "absent" | "late" | "excused"
+        }));
+      
+      setAttendanceRecords(typedRecords);
     } catch (err: any) {
       console.error("Error fetching attendance records:", err);
       setError(err);

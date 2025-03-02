@@ -23,3 +23,14 @@ export interface DailyAttendanceItem {
   status: string;
   isWeekend: boolean;
 }
+
+// This type matches what Supabase returns
+export interface SupabaseAttendanceRecord {
+  id: string;
+  student_id: string;
+  date: string;
+  status: string;
+  notes?: string;
+  created_at?: string;
+  updated_at?: string;
+}

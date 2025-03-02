@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Student } from "@/components/StudentCard";
 import { 
@@ -20,7 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, Clock, AlertCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { AttendanceRecord } from "@/types/attendance";
+import { AttendanceRecord, SupabaseAttendanceRecord } from "@/types/attendance";
 
 interface DailyAttendanceMarkingSheetProps {
   students: Student[];
@@ -58,8 +57,14 @@ export function DailyAttendanceMarkingSheet({
       
       // Create a map of student_id -> attendance record
       const recordsMap: Record<string, AttendanceRecord> = {};
-      data.forEach((record: AttendanceRecord) => {
-        recordsMap[record.student_id] = record;
+      data.forEach((record: SupabaseAttendanceRecord) => {
+        // Validate that status is one of the allowed values
+        if (isValidStatus(record.status)) {
+          recordsMap[record.student_id] = {
+            ...record,
+            status: record.status as "present" | "absent" | "late" | "excused"
+          };
+        }
       });
       
       setAttendanceRecords(recordsMap);
@@ -138,6 +143,10 @@ export function DailyAttendanceMarkingSheet({
     } finally {
       setSavingStudentId(null);
     }
+  };
+
+  const isValidStatus = (status: string): status is "present" | "absent" | "late" | "excused" => {
+    return ["present", "absent", "late", "excused"].includes(status);
   };
 
   if (isLoading) {

@@ -31,6 +31,13 @@ export function AttendanceSheet({ student }: AttendanceSheetProps) {
     }
   }, [attendanceRecords]);
 
+  // Calculate total stats for all courses
+  const totalClasses = courseAttendance.reduce((sum, course) => sum + course.totalClasses, 0);
+  const totalAttended = courseAttendance.reduce((sum, course) => sum + course.attended, 0);
+  const overallPercentage = totalClasses > 0 
+    ? ((totalAttended / totalClasses) * 100).toFixed(2) 
+    : "0.00";
+
   return (
     <Card className="overflow-hidden animate-fade-in">
       <CardContent className="p-6">
@@ -45,7 +52,12 @@ export function AttendanceSheet({ student }: AttendanceSheetProps) {
             </div>
           ) : (
             <>
-              <CourseAttendanceSummary courses={courseAttendance} />
+              <CourseAttendanceSummary 
+                courses={courseAttendance} 
+                totalClasses={totalClasses}
+                totalAttended={totalAttended}
+                overallPercentage={overallPercentage}
+              />
 
               <Separator />
               
