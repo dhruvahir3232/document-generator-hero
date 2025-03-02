@@ -1,7 +1,6 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { getInitials } from "@/lib/utils";
 
 export interface Student {
@@ -40,13 +39,6 @@ export function StudentCard({ student, onSelect }: StudentCardProps) {
             <p className="text-sm text-muted-foreground truncate">Class: {student.class}</p>
           )}
         </div>
-        <Button 
-          variant="outline"
-          size="sm"
-          onClick={() => onSelect(student)}
-        >
-          Edit
-        </Button>
       </CardContent>
     </Card>
   );

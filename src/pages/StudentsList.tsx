@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Student, StudentCard } from "@/components/StudentCard";
@@ -144,12 +145,17 @@ export default function StudentsList() {
 function StudentListItem({ student }: { student: Student }) {
   return (
     <div className="group relative rounded-md overflow-hidden border bg-card hover:bg-accent/50 transition-colors">
-      <Link to={`/manage-students/${student.id}`}>
-        <StudentCard 
-          student={student} 
-          onSelect={() => {}} // Not using selection functionality here
-        />
-      </Link>
+      <StudentCard 
+        student={student} 
+        onSelect={() => {}} // Not using selection functionality here
+      />
+      <div className="absolute inset-y-0 right-4 flex items-center">
+        <Button asChild variant="ghost" size="sm">
+          <Link to={`/manage-students/${student.id}`}>
+            Edit
+          </Link>
+        </Button>
+      </div>
     </div>
   );
 }
