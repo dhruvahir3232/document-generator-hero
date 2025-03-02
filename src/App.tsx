@@ -7,6 +7,7 @@ import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
 import ManageStudents from "@/pages/ManageStudents";
 import StudentsList from "@/pages/StudentsList";
+import Attendance from "@/pages/Attendance";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/manage-students" element={<StudentsList />} />
         <Route path="/manage-students/new" element={<ManageStudents />} />
         <Route path="/manage-students/:id" element={<ManageStudents />} />
+        <Route path="/attendance" element={<Attendance />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
