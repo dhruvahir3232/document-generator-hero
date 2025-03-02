@@ -1,11 +1,28 @@
 
+import { useState, useEffect } from "react";
 import { DailyAttendanceItem } from "@/types/attendance";
+import { useAttendanceRecords } from "@/hooks/use-attendance-records";
+import { generateDailyAttendance } from "@/utils/attendanceUtils";
 
 interface DailyAttendanceGridProps {
-  dailyAttendance: DailyAttendanceItem[];
+  studentId: string;
 }
 
-export function DailyAttendanceGrid({ dailyAttendance }: DailyAttendanceGridProps) {
+export function DailyAttendanceGrid({ studentId }: DailyAttendanceGridProps) {
+  const [dailyAttendance, setDailyAttendance] = useState<DailyAttendanceItem[]>([]);
+  const { attendanceRecords, loading } = useAttendanceRecords({ studentId });
+  
+  useEffect(() => {
+    if (attendanceRecords.length > 0) {
+      const attendance = generateDailyAttendance(attendanceRecords);
+      setDailyAttendance(attendance);
+    } else {
+      // If no records, generate empty attendance grid
+      const emptyAttendance = generateDailyAttendance([]);
+      setDailyAttendance(emptyAttendance);
+    }
+  }, [attendanceRecords]);
+
   return (
     <>
       <h3 className="font-semibold text-lg mb-4">Daily Attendance</h3>

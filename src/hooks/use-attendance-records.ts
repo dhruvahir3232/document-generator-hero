@@ -17,6 +17,8 @@ export function useAttendanceRecords({ studentId, date }: UseAttendanceRecordsPr
   
   // Fetch attendance records based on filters
   const fetchAttendanceRecords = async () => {
+    if (!studentId) return;
+    
     setLoading(true);
     setError(null);
     

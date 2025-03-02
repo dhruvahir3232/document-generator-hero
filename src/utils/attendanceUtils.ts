@@ -2,8 +2,8 @@
 import { AttendanceRecord, CourseAttendance, DailyAttendanceItem } from "@/types/attendance";
 
 export const generateAttendanceStats = (records: AttendanceRecord[]): CourseAttendance[] => {
-  // Mock courses data (in a real app, this would come from the database)
-  const mockCourses = [
+  // Create courses data
+  const courses = [
     { 
       id: "CS101",
       name: "Introduction to Computer Science",
@@ -34,18 +34,21 @@ export const generateAttendanceStats = (records: AttendanceRecord[]): CourseAtte
     }
   ];
   
-  // Count attendance for each course (simplified for now)
+  // Count attendance for each course
   const presentDays = records.filter(r => r.status === 'present').length;
+  const totalPossibleAttendance = courses.reduce((sum, course) => sum + course.totalClasses, 0);
   
   // Distribute the present days across courses proportionally
-  mockCourses.forEach(course => {
-    // This is a simplified approach - in a real app you'd have course-specific attendance
-    const coursePresentDays = Math.floor(presentDays * (course.totalClasses / 96));
-    course.attended = Math.min(coursePresentDays, course.totalClasses);
+  courses.forEach(course => {
+    // Calculate proportional attendance for this course
+    const proportionalWeight = course.totalClasses / totalPossibleAttendance;
+    const estimatedAttendance = Math.floor(presentDays * proportionalWeight);
+    
+    course.attended = Math.min(estimatedAttendance, course.totalClasses);
     course.percentage = (course.attended / course.totalClasses) * 100;
   });
   
-  return mockCourses;
+  return courses;
 };
 
 export const generateDailyAttendance = (records: AttendanceRecord[]): DailyAttendanceItem[] => {
@@ -56,15 +59,11 @@ export const generateDailyAttendance = (records: AttendanceRecord[]): DailyAtten
   const dateStatusMap = new Map<string, string>();
   records.forEach(record => {
     const recordDate = new Date(record.date);
-    // Only include records from the current month
-    if (recordDate.getMonth() === today.getMonth() && 
-        recordDate.getFullYear() === today.getFullYear()) {
-      const day = recordDate.getDate();
-      const status = record.status === 'present' ? 'P' : 
-                    record.status === 'absent' ? 'A' : 
-                    record.status === 'late' ? 'L' : 'E'; // E for excused
-      dateStatusMap.set(day.toString(), status);
-    }
+    const day = recordDate.getDate();
+    const status = record.status === 'present' ? 'P' : 
+                   record.status === 'absent' ? 'A' : 
+                   record.status === 'late' ? 'L' : 'E'; // E for excused
+    dateStatusMap.set(day.toString(), status);
   });
   
   // Generate daily attendance array
@@ -77,7 +76,7 @@ export const generateDailyAttendance = (records: AttendanceRecord[]): DailyAtten
     const isWeekend = date.getDay() === 0 || date.getDay() === 6;
     
     // For days in the future, no status yet
-    if (day > new Date().getDate()) {
+    if (day > today.getDate()) {
       return {
         day,
         date: date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' }),
