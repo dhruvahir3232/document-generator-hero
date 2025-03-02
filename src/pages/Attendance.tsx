@@ -85,12 +85,14 @@ const Attendance = () => {
                     <h3 className="text-lg font-medium">Select Date</h3>
                   </CardHeader>
                   <CardContent>
-                    <Calendar
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={(date) => date && setSelectedDate(date)}
-                      className="rounded-md border mx-auto"
-                    />
+                    <div className="flex justify-center">
+                      <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={(date) => date && setSelectedDate(date)}
+                        className="border rounded-md max-w-[300px]"
+                      />
+                    </div>
                     <div className="mt-4 text-center text-sm">
                       <p>Selected: <span className="font-medium">{format(selectedDate, "EEEE, MMMM d, yyyy")}</span></p>
                     </div>
