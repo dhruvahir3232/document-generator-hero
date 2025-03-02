@@ -19,9 +19,14 @@ interface StudentCardProps {
   selected?: boolean;
 }
 
-export function StudentCard({ student, onSelect }: StudentCardProps) {
+export function StudentCard({ student, onSelect, selected }: StudentCardProps) {
   return (
-    <Card className="overflow-hidden transition-all duration-200 hover:shadow-medium">
+    <Card 
+      className={`overflow-hidden transition-all duration-200 hover:shadow-medium cursor-pointer ${
+        selected ? "border-primary border-2" : ""
+      }`}
+      onClick={() => onSelect(student)}
+    >
       <CardContent className="p-6 flex items-center space-x-4">
         <Avatar className="h-14 w-14 border">
           {student.photo_url ? (
