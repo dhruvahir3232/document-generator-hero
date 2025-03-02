@@ -22,8 +22,6 @@ export function useAttendanceRecords({ studentId, date }: UseAttendanceRecordsPr
   
   // Fetch attendance records based on filters
   const fetchAttendanceRecords = async () => {
-    if (!studentId) return;
-    
     setLoading(true);
     setError(null);
     
@@ -169,7 +167,9 @@ export function useAttendanceRecords({ studentId, date }: UseAttendanceRecordsPr
   
   // Fetch records on mount or when filters change
   useEffect(() => {
-    fetchAttendanceRecords();
+    if (studentId || date) {
+      fetchAttendanceRecords();
+    }
   }, [studentId, date]);
   
   return {
