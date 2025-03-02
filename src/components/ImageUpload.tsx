@@ -43,6 +43,20 @@ export function ImageUpload({ initialImage, onImageUploaded }: ImageUploadProps)
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `${fileName}`;
       
+      // First check if the bucket exists and create it if it doesn't
+      const { data: bucketData, error: bucketError } = await supabase
+        .storage
+        .getBucket('student_pictures');
+        
+      if (bucketError && bucketError.message.includes('The resource was not found')) {
+        await supabase
+          .storage
+          .createBucket('student_pictures', {
+            public: true,
+            fileSizeLimit: 2097152, // 2MB in bytes
+          });
+      }
+      
       // Upload the file to Supabase Storage
       const { data, error } = await supabase.storage
         .from('student_pictures')
