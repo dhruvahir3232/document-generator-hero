@@ -50,7 +50,7 @@ export function BasicInfoForm({
                 />
               </div>
               <p className="text-xs text-muted-foreground text-center">
-                Upload a student photo here
+                {formData.picture ? "Click to change student photo" : "Upload a student photo here"}
               </p>
             </CardContent>
           </Card>

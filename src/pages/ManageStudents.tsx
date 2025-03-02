@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Student } from "@/components/StudentCard";
@@ -37,6 +38,9 @@ export default function ManageStudents() {
       }
       
       if (data) {
+        // Make sure to log the data to see what's coming back
+        console.log("Fetched student data:", data);
+        
         setStudent({
           id: data.id,
           name: data.name,

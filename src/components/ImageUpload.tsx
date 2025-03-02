@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,13 @@ interface ImageUploadProps {
 export function ImageUpload({ initialImage, onImageUploaded }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | undefined>(initialImage);
+  
+  // Update preview when initialImage changes
+  useEffect(() => {
+    if (initialImage) {
+      setPreview(initialImage);
+    }
+  }, [initialImage]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) {
