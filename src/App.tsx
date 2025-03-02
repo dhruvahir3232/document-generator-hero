@@ -1,3 +1,4 @@
+
 import './App.css';
 import { Toaster } from 'sonner';
 import { BrowserRouter } from "react-router-dom";
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/manage-students" element={<StudentsList />} />
+        <Route path="/manage-students/new" element={<ManageStudents />} />
         <Route path="/manage-students/:id" element={<ManageStudents />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -13,7 +13,7 @@ export const NavigationActions = () => {
         </Link>
       </Button>
       <Button asChild size="sm">
-        <Link to="/manage-students">
+        <Link to="/manage-students/new">
           <UserPlus className="mr-2 h-4 w-4" />
           Add Student
         </Link>
